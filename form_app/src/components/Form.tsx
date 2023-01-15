@@ -9,13 +9,16 @@ import {
   Typography,
 } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import formikValidateUsingJoi from "../utils/frormikValidate";
-import Joi from "joi";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-
-function Form() {
+import ConfirmPay from "./ConfirmPay";
+import { ProductType } from "./Checkout";
+type formProps = {
+  productData: ProductType;
+};
+function Form({ productData }: formProps) {
   const validationSchema = yup.object({
     firstName: yup.string().min(2, "Too Short!").required("required"),
     lastName: yup.string().min(2, "Too Short!").required("required"),
@@ -45,8 +48,6 @@ function Form() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log({ values });
-      alert("hey");
       axios.post("http://localhost:3000/checkout", values).then(() => {
         console.log("done");
       });
@@ -54,13 +55,12 @@ function Form() {
   });
   return (
     <Paper sx={{ padding: 5 }}>
-      <Stack spacing={3} display={"flex"}>
-        {/* <form noValidate autoComplete="off" onSubmit={form.handleSubmit}> */}
+      <Stack spacing={3}>
         <Typography variant="h6" fontWeight="bold" align="left">
           Ship to
         </Typography>
         <Divider />
-        <Box display={"flex"} sx={{ justifyContent: "space-evenly" }}>
+        <Box sx={{ justifyContent: "space-evenly", display: "flex" }}>
           <TextField
             id="firstName"
             label="First Name"
@@ -85,7 +85,7 @@ function Form() {
             helperText={form.errors.lastName}
           />
         </Box>
-        <Box display={"flex"} sx={{ justifyContent: "space-evenly" }}>
+        <Box sx={{ justifyContent: "space-evenly", display: "flex" }}>
           {" "}
           <TextField
             id="outlined-Street Address"
@@ -109,7 +109,7 @@ function Form() {
           />
         </Box>
 
-        <Box display={"flex"} sx={{ justifyContent: "space-evenly" }}>
+        <Box sx={{ justifyContent: "space-evenly", display: "flex" }}>
           <TextField
             id="outlined-State"
             label="State"
@@ -130,7 +130,7 @@ function Form() {
           />
         </Box>
 
-        <Box display={"flex"} sx={{ justifyContent: "space-evenly" }}>
+        <Box sx={{ justifyContent: "space-evenly", display: "flex" }}>
           <TextField
             id="outlined-Email"
             label="Email"
@@ -150,17 +150,16 @@ function Form() {
             helperText={form.errors.phone}
           />
         </Box>
-        <Box display={"flex"} sx={{ justifyContent: "space-evenly" }}>
-          <Button
-            onClick={() => form.handleSubmit()}
-            type="submit"
-            variant="contained"
-            endIcon={<AttachMoneyIcon />}
-          >
-            Send
-          </Button>
-        </Box>
-        {/* </form> */}
+        <ConfirmPay productData={productData} />
+        <Button
+          fullWidth
+          onClick={() => form.handleSubmit()}
+          type="submit"
+          variant="contained"
+          endIcon={<AttachMoneyIcon />}
+        >
+          Send
+        </Button>
       </Stack>
     </Paper>
   );
